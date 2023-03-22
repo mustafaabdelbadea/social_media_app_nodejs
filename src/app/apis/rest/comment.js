@@ -1,21 +1,10 @@
 import { Router } from "express";
-import userService from "../../services/user.service.js";
+import commentService from "../../services/comment.service.js";
 const router = Router();
-import multer from "multer";
-const upload = multer({dest:"../../../../uploads"});
 
-router.post("/",upload.single('avatar') ,async (req, res) => {
+router.post("/",async (req, res) => {
   try {
-    const result = await userService.userSignUp(req);
-
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
-router.post("/signin", async (req, res) => {
-  try {
-    const result = await userService.userSignIn(req.body);
+    const result = await commentService.commentCreate(req.body);
 
     res.send(result);
   } catch (error) {
@@ -23,14 +12,40 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  try {
-    const result = await userService.userGetOne(req.params.id);
 
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
+router.get('/:id',async(req,res) => {
+  try {
+      const result = await commentService.commentGetOne(req.params.id);
+  
+      res.send(result);
+    } catch (error) {
+      res.send(error);
+    }
+});
+
+
+router.patch('/:id',async (req,res) => {
+
+  try {
+      const result = await commentService.commentUpdateOne(req.params.id);
+  
+      res.send(result);
+    } catch (error) {
+      res.send(error);
+    }
+});
+
+
+
+router.delete('/:id',async (req,res) => {
+  
+  try {
+      const result = await commentService.commentDeleteOne(req.params.id);
+  
+      res.send(result);
+    } catch (error) {
+      res.send(error);
+    }
 });
 
 export const commentRouter = router;

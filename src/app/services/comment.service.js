@@ -1,78 +1,102 @@
-import UsersController  from "../controllers/user.controller.js";
+import CommentController  from "../controllers/comment.controller.js";
 import { serviceErrorHandler } from "./utils/error.js";
-import usersValidator from "./utils/user-validator.js";
+import commentValidator from "./utils/comment-validator.js";
+
+
 
 class CommentService {
-    
-    async userSignUp(data) {
-      try {
-        await usersValidator.create(data);
-  
-        const foundUser = (
-          await UsersController.getOneByFilter({ email: data.email })
-        ).data;
-  
-        if (foundUser) {
-          throw new serviceErrorHandler(
-            { message: "Email already exists", name: "userFound" },
-            {
-              code: 409,
-              path: "email",
-            }
-          );
-        }
-  
-        delete data.confirmPassword;
-  
-        const userResponse = await UsersController.userRegister(data);
-  
-        return userResponse;
-      } catch (error) {
-        throw error;
-      }
-    }
-  
-    async userSignIn(data) {
-      try {
-        await usersValidator.signin(data);
-  
-        const userResponse = await UsersController.signIn(data);
-  
-        return userResponse;
-      } catch (error) {
-          throw error 
-      }
-    }
-  
-    async userGetOne(data) {
-      try {
-        const foundUser = (await UsersController.getOneById(data)).data;
-  
-        if (!foundUser) {
-            throw new serviceErrorHandler(
-                { message: "User not found", name: "usernotfound" },
-                {
-              code: 404,
-              path: "_id",
+
+  async commentCreate(data) {
+    try {
+      await commentValidator.create(data);
+
+      const foundComment = (
+        await CommentController.getOneByFilter({ id: data.id })
+      ).data;
+
+      if (foundComment) {
+        throw new serviceErrorHandler(
+          { message: "Id already exists", name: "userFound" },
+          {
+            code: 409,
+            path: "Id",
           }
-          );
+        );
       }
-      
-      return foundUser;
-  } catch (error) {
-          console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
-        throw error;
-      }
-    }
-  
-    async UploadPhoto(photo){
-      try {
-        
-      } catch (error) {
-        
-      }
-     
+
+      const commentResponse = await CommentController.commentRegister(data);
+
+      return commentResponse;
+    } catch (error) {
+      throw error;
     }
   }
+
+  async commentGetOne(data) {
+    try {
+      const foundComment = (await CommentController.getOneById(data)).data;
+
+      if (!foundComment) {
+          throw new serviceErrorHandler(
+              { message: "Comment not found", name: "usernotfound" },
+              {
+            code: 404,
+            path: "_id",
+        }
+        );
+    }
+    
+    return foundComment;
+} catch (error) {
+        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+      throw error;
+    }
+  }
+
+  async commentUpdateOne(data) {
+    try {
+      const foundComment = (await CommentController.updateOneByFilter(data)).data;
+
+      if (!foundComment) {
+          throw new serviceErrorHandler(
+              { message: "Comment not found", name: "usernotfound" },
+              {
+            code: 404,
+            path: "_id",
+        }
+        );
+    }
+    
+    return foundComment;
+} catch (error) {
+        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+      throw error;
+    }
+  }
+
+  async commentDeleteOne(data) {
+    try {
+      const foundComment = (await CommentController.deleteOneByFilter(data)).data;
+
+      if (!foundComment) {
+          throw new serviceErrorHandler(
+              { message: "Comment not found", name: "usernotfound" },
+              {
+            code: 404,
+            path: "_id",
+        }
+        );
+    }
+    
+    return foundComment;
+} catch (error) {
+        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+      throw error;
+    }
+  }
+
   
-  export default new CommentService();
+
+}
+
+export default new CommentService();

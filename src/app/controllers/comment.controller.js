@@ -1,16 +1,16 @@
 import jwt from "jsonwebtoken";
 import Crud from "./utils/Crud.js";
 import { serviceErrorHandler } from "../services/utils/error.js";
-import PostModel from "../models/post.model.js";
+import CommentModel from "../models/comment.model.js";
 
-export class PostController {
+export class CommentController {
   
   async getOneById(id) {
     try {
-      const post = await Crud.getById(PostModel, id);
+      const comment = await Crud.getById(CommentModel, id);
 
       return {
-        data: post,
+        data: comment,
       };
     } catch (error) {
       throw error;
@@ -31,10 +31,10 @@ export class PostController {
 
   async updateOneByFilter(filter, data) {
     try {
-      const post = await Crud.findOneAndUpdate(PostModel, filter, data)
+      const comment = await Crud.findOneAndUpdate(CommentModel, filter, data)
 
       return {
-        data: post
+        data: comment
       }
     } catch (error) {
       throw error
@@ -43,10 +43,10 @@ export class PostController {
 
   async deleteOneByFilter(filter) {
     try {
-      const post = await Crud.deleteOne(PostModel, filter)
+      const comment = await Crud.deleteOne(CommentModel, filter)
 
       return {
-        data: post
+        data: comment
       }
     } catch (error) {
       throw error
@@ -54,4 +54,4 @@ export class PostController {
   }
 }
 
-export default new PostController();
+export default new CommentController();
