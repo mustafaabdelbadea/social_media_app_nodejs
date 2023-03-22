@@ -1,6 +1,8 @@
 import UsersController  from "../controllers/user.controller.js";
 import { serviceErrorHandler } from "./utils/error.js";
 import usersValidator from "./utils/user-validator.js";
+
+
 class UserService {
   async userSignUp(data) {
     try {
@@ -61,6 +63,15 @@ class UserService {
         console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
       throw error;
     }
+  }
+
+  async UploadPhoto(photo){
+    try {
+      
+    } catch (error) {
+      
+    }
+   
   }
 }
 

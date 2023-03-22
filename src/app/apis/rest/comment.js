@@ -33,4 +33,4 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-export const userRouter = router;
+export const commentRouter = router;
