@@ -10,7 +10,8 @@ export class UsersController {
         name: data.name,
         email: data.email,
         password: data.password,
-        role: data.role
+        role: data.role,
+        photos: data.photos,
       };
 
       const user = await Crud.insert(UserModel, userData);
@@ -28,10 +29,7 @@ export class UsersController {
       const user = await Crud.findOneByFilter(UserModel, { email: data.email });
 
       if (!user) {
-        throw new serviceErrorHandler(
-          {message: "User not found"},
-          400
-        );
+        throw new serviceErrorHandler({ message: "User not found" }, 400);
       }
 
       if (UserModel.checkPassword(data.password, user.password)) {
@@ -47,10 +45,7 @@ export class UsersController {
           },
         };
       } else {
-        throw new serviceErrorHandler(
-          {message: "Wrong Password"},
-          400
-        );
+        throw new serviceErrorHandler({ message: "Wrong Password" }, 400);
       }
     } catch (error) {
       throw error;
@@ -60,7 +55,7 @@ export class UsersController {
   async getOneById(id) {
     try {
       const user = await Crud.getById(UserModel, id, {
-        populate: "password" 
+        populate: "password",
       });
 
       return {
@@ -85,13 +80,23 @@ export class UsersController {
 
   async updateOneByFilter(filter, data) {
     try {
-      const user = await Crud.findOneAndUpdate(UserModel, filter, data)
+      const user = await Crud.findOneAndUpdate(UserModel, filter, data);
 
       return {
-        data: user
-      }
+        data: user,
+      };
     } catch (error) {
-      throw error
+      throw error;
+    }
+  }
+
+  async deleteOne(filter) {
+    try {
+      const response = await Crud.deleteOne(UserModel, filter);
+
+      return response;
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -1,5 +1,6 @@
 import joi from "joi";
 import { serviceErrorHandler } from "./error.js";
+const roles = ['admin', 'creator', 'user']
 
 class UserValidation {
 async create(data) {
@@ -22,6 +23,10 @@ async create(data) {
           )
         ),
       confirmPassword: joi.ref("password"),
+      role: joi.required().valid(...roles),
+      photos: joi.array().items(
+        joi.string().required()
+      )
     });
 
     const { error, value } = createSchema.validate(data);
