@@ -21,6 +21,13 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    enum: ["admin", "creator", "user"]
+  },
+  photos: {
+    type: [String]
+  }
 },
 {
   versionKey: false,
