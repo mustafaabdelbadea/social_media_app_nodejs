@@ -78,8 +78,6 @@ class PostService {
         _id: data._id,
       };
 
-
-
       const response = await PostController.updateOneByFilter(
         filter,
         preparedData

@@ -2,11 +2,9 @@ import joi from "joi";
 import { serviceErrorHandler } from "./error.js";
 
 class PostValidation {
-async create(data) {
+  async create(data) {
     const createSchema = joi.object({
-      content: joi
-        .string()
-        .required()
+      content: joi.string().required(),
     });
 
     const { error, value } = createSchema.validate(data);
@@ -20,8 +18,6 @@ async create(data) {
       return true;
     }
   }
-
-  
 }
 
 export default new PostValidation();

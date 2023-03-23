@@ -17,7 +17,7 @@ export class PostController {
   async addPost(data) {
     try {
       const post = await Crud.insert(PostModel, data);
-      return post
+      return post;
     } catch (error) {
       throw error;
     }

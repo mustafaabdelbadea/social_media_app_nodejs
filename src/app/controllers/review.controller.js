@@ -38,7 +38,6 @@ export class ReviewController {
   async updateOneByFilter(filter, data) {
     try {
       const review = await Crud.findOneAndUpdate(ReviewModel, filter, data)
-      console.log("🚀 ~ file: review.controller.js:41 ~ ReviewController ~ updateOneByFilter ~ review:", review)
 
       return {
         data: review

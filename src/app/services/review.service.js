@@ -108,7 +108,6 @@ class ReviewService {
         user: authenticatedUser._id,
         _id: data._id
       }
-      console.log("🚀 ~ file: review.service.js:111 ~ ReviewService ~ reviewUpdateOne ~ filter:", filter)
 
 
       const foundReview = await ReviewController.updateOneByFilter(filter, rateObj);

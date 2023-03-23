@@ -1,7 +1,9 @@
 import UsersController from "../controllers/user.controller.js";
 import { serviceErrorHandler } from "./utils/error.js";
 import usersValidator from "./utils/user-validator.js";
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import path from "path";
 import { authenticateUser } from "./utils/authentication.js";
 import userController from "../controllers/user.controller.js";
 class UserService {
@@ -96,12 +98,12 @@ class UserService {
       const response = await userController.deleteOne({ _id: data });
       return response;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
-s
+
   async UploadPhoto(photo) {
-    cloudinary.v2.config({
+    cloudinary.config({
       cloud_name: process.env.CLOUD_NAME,
       api_key: process.env.API_KEY,
       api_secret: process.env.API_SECRET,
@@ -111,8 +113,10 @@ s
       const response = await cloudinary.uploader.upload("./uploads/" + photo, {
         public_id: "olympic_flag",
       });
+      this.clearUploads(photo);
       return response.secure_url;
     } catch (error) {
+      await this.clearUploads(photo);
       throw new serviceErrorHandler(
         { message: "Error while uploading photo" },
         {
@@ -120,6 +124,16 @@ s
           path: "photo",
         }
       );
+    }
+  }
+
+  clearUploads(file) {
+    try {
+      fs.unlink(path.join("./uploads/", file), (err) => {
+        if (err) throw err;
+      });
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -13,7 +13,9 @@ async create(data) {
     if (error) {
       throw new serviceErrorHandler(
         error.details[0],
-        400,
+        {
+          code: 400
+        },
         error?.details[0]?.path[0]
       );
     } else {

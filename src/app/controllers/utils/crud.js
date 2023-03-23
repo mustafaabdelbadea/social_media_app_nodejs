@@ -1,7 +1,7 @@
 import { model } from "mongoose";
 
 class Crud {
-  async insert(model, data){
+  async insert(model, data) {
     try {
       const document = new model(data);
       const insertedDoc = await document.save();
@@ -15,8 +15,8 @@ class Crud {
 
   async findAll(model, filter) {
     try {
-      const data = await model.find(filter)
-      return data
+      const data = await model.find(filter);
+      return data;
     } catch (error) {
       throw new Error("Something Went Wrong");
     }
@@ -24,8 +24,10 @@ class Crud {
 
   async getById(model, _id, options) {
     try {
-      const doc = await model.findOne({_id: _id}).select(`-${options?.populate}`);
-      
+      const doc = await model
+        .findOne({ _id: _id })
+        .select(`-${options?.populate}`);
+
       return doc;
     } catch (error) {
       throw new Error("Something Went Wrong");
@@ -34,8 +36,8 @@ class Crud {
 
   async findOneByFilter(model, filter, options = {}) {
     try {
-      const doc = await model.findOne(filter)
-      return doc
+      const doc = await model.findOne(filter);
+      return doc;
     } catch (error) {
       throw new Error("Something Went Wrong");
     }
@@ -43,9 +45,9 @@ class Crud {
 
   async findOneAndUpdate(model, filter, data) {
     try {
-      const doc = await model.findOneAndUpdate(filter, data, { new: true })
+      const doc = await model.findOneAndUpdate(filter, data, { new: true });
 
-      return doc
+      return doc;
     } catch (error) {
       throw new Error("Something Went Wrong");
     }
@@ -53,9 +55,9 @@ class Crud {
 
   async deleteOne(model, filter) {
     try {
-      const doc = await model.deleteOne(filter)
+      const doc = await model.deleteOne(filter);
 
-      return doc
+      return doc;
     } catch (error) {
       throw new Error("Something Went Wrong");
     }
@@ -63,13 +65,13 @@ class Crud {
 
   async deleteAll(model, filter) {
     try {
-      const doc = await model.deleteMany(filter)
+      const doc = await model.deleteMany(filter);
 
-      return doc
+      return doc;
     } catch (error) {
       throw new Error("Something Went Wrong");
     }
-  } 
+  }
 }
 
 export default new Crud();
