@@ -1,4 +1,4 @@
-import Crud from "./utils/Crud.js";
+import Crud from "./utils/crud.js";
 import PostModel from "../models/post.model.js";
 
 export class PostController {

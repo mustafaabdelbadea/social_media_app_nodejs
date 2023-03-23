@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Crud from "./utils/Crud.js";
+import Crud from "./utils/crud.js";
 import { serviceErrorHandler } from "../services/utils/error.js";
 import CommentModel from "../models/comment.model.js";
 

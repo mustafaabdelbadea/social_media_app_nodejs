@@ -1,4 +1,4 @@
-import Crud from "./utils/Crud.js";
+import Crud from "./utils/crud.js";
 import ReviewModel from "../models/review.model.js";
 
 export class ReviewController {
