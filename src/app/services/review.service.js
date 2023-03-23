@@ -1,4 +1,5 @@
 import ReviewController  from "../controllers/user.controller.js";
+import { authenticateUser } from "./utils/authentication.js";
 import { serviceErrorHandler } from "./utils/error.js";
 import reviewValidator from "./utils/review-validator.js";
 import reviewValidator from "./utils/user-validator.js";
@@ -55,8 +56,17 @@ class ReviewService {
     }
   }
 
-  async reviewUpdateOne(data) {
+  async reviewUpdateOne(data, userToken) {
     try {
+
+      const authenticatedUser = await authenticateUser(userToken);
+      if (authenticatedUser.role != "admin") {
+        throw new serviceErrorHandler(
+          { message: "Not authorized" },
+          { code: 401 }
+        );
+      }
+
       const foundReview = (await ReviewController.updateOneByFilter(data)).data;
 
       if (!foundReview) {
@@ -76,9 +86,17 @@ class ReviewService {
     }
   }
 
-  async reviewDeleteOne(data) {
+  async reviewDeleteOne(data, userToken) {
     try {
-      const foundReview = (await ReviewController.deleteOneByFilter(data)).data;
+      const authenticatedUser = await authenticateUser(userToken);
+      if (authenticatedUser.role != "admin") {
+        throw new serviceErrorHandler(
+          { message: "Not authorized" },
+          { code: 401 }
+        );
+      }
+
+      const foundPost = (await ReviewController.deleteOneByFilter(data)).data;
 
       if (!foundReview) {
           throw new serviceErrorHandler(

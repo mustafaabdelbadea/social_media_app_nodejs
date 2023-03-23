@@ -1,30 +1,28 @@
 import CommentController  from "../controllers/comment.controller.js";
 import { serviceErrorHandler } from "./utils/error.js";
 import commentValidator from "./utils/comment-validator.js";
+import { authenticateUser } from "./utils/authentication.js";
 
 
 
 class CommentService {
 
-  async commentCreate(data) {
+  async commentCreate(data, userToken) {
     try {
-      await commentValidator.create(data);
+      const authenticatedUser = await authenticateUser(userToken)
+      if(authenticatedUser.role != "user"){
 
-      const foundComment = (
-        await CommentController.getOneByFilter({ id: data.id })
-      ).data;
-
-      if (foundComment) {
-        throw new serviceErrorHandler(
-          { message: "Id already exists", name: "userFound" },
-          {
-            code: 409,
-            path: "Id",
-          }
-        );
       }
+  
+      await commentValidator.create(data);
+      const preparedData = { 
+        ...data,
+        user: authenticatedUser._id
+      }
+  
+  
 
-      const commentResponse = await CommentController.commentRegister(data);
+      const commentResponse = await CommentController.commentRegister(preparedData);
 
       return commentResponse;
     } catch (error) {

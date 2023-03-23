@@ -26,7 +26,6 @@ router.post("/signin", async (req, res) => {
 router.delete("/:id", async (req,res) => {
   try {
     const result = await userService.deleteOne(req.params.id, req.headers['authorization']);
-
     res.send(result);
   } catch (error) {
     res.send(error);

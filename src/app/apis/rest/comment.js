@@ -2,9 +2,13 @@ import { Router } from "express";
 import commentService from "../../services/comment.service.js";
 const router = Router();
 
-router.post("/",async (req, res) => {
+router.post("/:id",async (req, res) => {
   try {
-    const result = await commentService.commentCreate(req.body);
+    const data  = {
+      content: req.body.content,
+      post: req.params.id
+    }
+    const result = await commentService.commentCreate(req.body, req.headers['authorization']);
 
     res.send(result);
   } catch (error) {
@@ -15,8 +19,8 @@ router.post("/",async (req, res) => {
 
 router.get('/:id',async(req,res) => {
   try {
-      const result = await commentService.commentGetOne(req.params.id);
-  
+    
+      const result = await commentService.commentDeleteOne(req.params.id,req.headers['authorization']); 
       res.send(result);
     } catch (error) {
       res.send(error);

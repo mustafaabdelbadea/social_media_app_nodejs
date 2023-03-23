@@ -40,8 +40,7 @@ router.patch('/:id',async (req,res) => {
 router.delete('/:id',async (req,res) => {
   
   try {
-      const result = await postService.postDeleteOne(req.params.id);
-  
+    const result = await postService.postDeleteOne(req.params.id,req.headers['authorization']);      
       res.send(result);
     } catch (error) {
       res.send(error);
