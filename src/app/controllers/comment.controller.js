@@ -17,6 +17,15 @@ export class CommentController {
     }
   }
 
+  async addComment(data) {
+    try {
+      const comment = await Crud.insert(CommentModel, data);
+      return comment;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 //   async getOneByFilter(filter) {
 //     try {
 //       const user = await Crud.findOneByFilter(UserModel, filter);
@@ -33,9 +42,7 @@ export class CommentController {
     try {
       const comment = await Crud.findOneAndUpdate(CommentModel, filter, data)
 
-      return {
-        data: comment
-      }
+      return comment
     } catch (error) {
       throw error
     }

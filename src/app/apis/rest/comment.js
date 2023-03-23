@@ -8,8 +8,9 @@ router.post("/:id", async (req, res) => {
       content: req.body.content,
       post: req.params.id,
     };
+
     const result = await commentService.commentCreate(
-      req.body,
+      data,
       req.headers["authorization"]
     );
 
@@ -33,7 +34,14 @@ router.get("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   try {
-    const result = await commentService.commentUpdateOne(req.params.id);
+    const data = {
+      _id: req.params.id,
+      content: req.body.content,
+    };
+    const result = await commentService.commentUpdateOne(
+      data,
+      req.headers["authorization"]
+    );
 
     res.send(result);
   } catch (error) {
@@ -43,7 +51,10 @@ router.patch("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    const result = await commentService.commentDeleteOne(req.params.id);
+    const result = await commentService.commentDeleteOne(
+      req.params.id,
+      req.headers["authorization"]
+    );
 
     res.send(result);
   } catch (error) {

@@ -6,8 +6,8 @@ import { reviewRouter } from "./review.js";
 
 const router = Router();
 
-router.get("/", () => {
-  console.log("Hello World!");
+router.get("/", (req, res) => {
+  res.send("Hello World")
 });
 
 router.use("/user", userRouter);
