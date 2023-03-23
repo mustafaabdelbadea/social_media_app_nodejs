@@ -3,7 +3,6 @@ import PostModel from "../models/post.model.js";
 
 export class PostController {
   async getOneById(id) {
-    console.log("🚀 ~ file: post.controller.js:6 ~ PostController ~ getOneById ~ id:", id)
     try {
       const post = await Crud.getById(PostModel, id);
 

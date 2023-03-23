@@ -3,9 +3,13 @@ import reviewService from "../../services/review.service.js";
 const router = Router();
 
 //create a review
-router.post("/",async (req, res) => {
+router.post("/:id",async (req, res) => {
     try {
-      const result = await reviewService.reviewCreate(req.body);
+      const data = {
+        rate: req.body.rate,
+        post: req.params.id
+      }
+      const result = await reviewService.reviewCreate(data, req.headers['authorization']);
   
       res.send(result);
     } catch (error) {
@@ -17,7 +21,7 @@ router.post("/",async (req, res) => {
 
 router.get('/:id',async(req,res) => {
     try {
-        const result = await reviewService.reviewGetOne(req.params.id);
+        const result = await reviewService.reviewGetOne(req.params.id, req.headers['authorization']);
     
         res.send(result);
       } catch (error) {
@@ -28,9 +32,12 @@ router.get('/:id',async(req,res) => {
 
 
 router.patch('/:id',async (req,res) => {
- 
     try {
-        const result = await reviewService.reviewUpdateOne(req.params.id);
+      const data = {
+        _id: req.params.id,
+        rate: req.body.rate
+      }
+        const result = await reviewService.reviewUpdateOne(data, req.headers['authorization']);
     
         res.send(result);
       } catch (error) {

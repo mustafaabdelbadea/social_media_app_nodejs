@@ -42,8 +42,10 @@ class Crud {
   }
 
   async findOneAndUpdate(model, filter, data) {
+    console.log("🚀 ~ file: Crud.js:45 ~ Crud ~ findOneAndUpdate ~ filter:", filter)
     try {
       const doc = await model.findOneAndUpdate(filter, data, { new: true })
+      console.log("🚀 ~ file: Crud.js:47 ~ Crud ~ findOneAndUpdate ~ doc:", doc)
 
       return doc
     } catch (error) {

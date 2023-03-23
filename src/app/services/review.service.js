@@ -1,32 +1,57 @@
-import ReviewController  from "../controllers/user.controller.js";
 import { authenticateUser } from "./utils/authentication.js";
 import { serviceErrorHandler } from "./utils/error.js";
 import reviewValidator from "./utils/review-validator.js";
-
+import ReviewController from "../controllers/review.controller.js";
+import PostController from "../controllers/post.controller.js";
 
 class ReviewService {
-
-  async reviewCreate(data) {
+  async reviewCreate(data, userToken) {
     try {
-      await reviewValidator.create(data);
+      const authenticatedUser = await authenticateUser(userToken);
 
-      const foundReview = (
-        await ReviewController.getOneByFilter({ id: data.id })
-      ).data;
-
-      if (foundReview) {
+      if (authenticatedUser.role != "user") {
         throw new serviceErrorHandler(
-          { message: "Id already exists", name: "userFound" },
-          {
-            code: 409,
-            path: "Id",
-          }
+          { message: "Not authorized" },
+          { code: 401 }
         );
       }
 
-      
+      const filter = {
+        user: authenticatedUser._id,
+        post: data.post
+      }
 
-      const reviewResponse = await ReviewController.reviewRegister(data);
+      const foundReview = (await ReviewController.getOneByfiler(filter)).data
+
+      if(foundReview) {
+        throw new serviceErrorHandler(
+          { message: "Already exits" },
+          { code: 400 }
+        );
+      }
+
+      const rateObj = {
+        rate: data.rate,
+      };
+
+      await reviewValidator.create(rateObj);
+
+      const foundPost = (await PostController.getOneById(data.post)).data;
+
+      if (!foundPost) {
+        throw new serviceErrorHandler(
+          { message: "Post not found" },
+          { code: 404 }
+        );
+      }
+
+      const preparedData = {
+        rate: data.rate,
+        user: authenticatedUser._id,
+        post: data.post,
+      };
+
+      const reviewResponse = await ReviewController.addReview(preparedData);
 
       return reviewResponse;
     } catch (error) {
@@ -34,53 +59,62 @@ class ReviewService {
     }
   }
 
-  async reviewGetOne(data) {
+  async reviewGetOne(data, userToken) {
     try {
-      const foundReview = (await ReviewController.getOneById(data)).data;
-
-      if (!foundReview) {
-          throw new serviceErrorHandler(
-              { message: "Review not found", name: "usernotfound" },
-              {
-            code: 404,
-            path: "_id",
-        }
-        );
-    }
-    
-    return foundReview;
-} catch (error) {
-        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
-      throw error;
-    }
-  }
-
-  async reviewUpdateOne(data, userToken) {
-    try {
-
       const authenticatedUser = await authenticateUser(userToken);
-      if (authenticatedUser.role != "admin") {
+
+      if (authenticatedUser.role != "user") {
         throw new serviceErrorHandler(
           { message: "Not authorized" },
           { code: 401 }
         );
       }
 
-      const foundReview = (await ReviewController.updateOneByFilter(data)).data;
+      const foundReview = (await ReviewController.getOneById(data)).data;
 
       if (!foundReview) {
-          throw new serviceErrorHandler(
-              { message: "Review not found", name: "usernotfound" },
-              {
+        throw new serviceErrorHandler(
+          { message: "Review not found", name: "usernotfound" },
+          {
             code: 404,
             path: "_id",
-        }
+          }
         );
+      }
+
+      return foundReview;
+    } catch (error) {
+      throw error;
     }
-    
-    return foundReview;
-} catch (error) {
-        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+  }
+
+  async reviewUpdateOne(data, userToken) {
+    try {
+      const authenticatedUser = await authenticateUser(userToken);
+      if (authenticatedUser.role != "user") {
+        throw new serviceErrorHandler(
+          { message: "Not authorized" },
+          { code: 401 }
+        );
+      }
+
+      const rateObj = {
+        rate: data.rate
+      }
+
+      await reviewValidator.create(rateObj);
+
+      const filter = {
+        user: authenticatedUser._id,
+        _id: data._id
+      }
+      console.log("🚀 ~ file: review.service.js:111 ~ ReviewService ~ reviewUpdateOne ~ filter:", filter)
+
+
+      const foundReview = await ReviewController.updateOneByFilter(filter, rateObj);
+
+      return foundReview;
+    } catch (error) {
       throw error;
     }
   }
@@ -95,27 +129,12 @@ class ReviewService {
         );
       }
 
-      const foundPost = (await ReviewController.deleteOneByFilter(data)).data;
-
-      if (!foundReview) {
-          throw new serviceErrorHandler(
-              { message: "Review not found", name: "usernotfound" },
-              {
-            code: 404,
-            path: "_id",
-        }
-        );
-    }
-    
-    return foundReview;
-} catch (error) {
-        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+      const foundReview = await ReviewController.deleteOneByFilter({ _id: data });
+      return foundReview;
+    } catch (error) {
       throw error;
     }
   }
-
-  
-
 }
 
 export default new ReviewService();
