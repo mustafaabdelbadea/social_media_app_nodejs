@@ -1,32 +1,27 @@
-import PostController  from "../controllers/post.controller.js";
+import PostController from "../controllers/post.controller.js";
+import { authenticateUser } from "./utils/authentication.js";
 import { serviceErrorHandler } from "./utils/error.js";
 import postValidator from "./utils/post-validator.js";
 
-
-
 class PostService {
-
-  async postCreate(data) {
+  async postCreate(data, userToken) {
     try {
-      await postValidator.create(data);
+      const authenticatedUser = await authenticateUser(userToken);
 
-      const foundPost = (
-        await PostController.getOneByFilter({ id: data.id })
-      ).data;
-
-      if (foundPost) {
+      if (authenticatedUser.role != "creator") {
         throw new serviceErrorHandler(
-          { message: "Id already exists", name: "userFound" },
-          {
-            code: 409,
-            path: "Id",
-          }
+          { message: "Not authorized" },
+          { code: 401 }
         );
       }
+      await postValidator.create(data);
 
-      
+      const preparedData = {
+        content: data.content,
+        user: authenticatedUser._id,
+      };
 
-      const postResponse = await ReviewController.postRegister(data);
+      const postResponse = await PostController.addPost(preparedData);
 
       return postResponse;
     } catch (error) {
@@ -34,71 +29,85 @@ class PostService {
     }
   }
 
-  async postGetOne(data) {
+  async postGetOne(data, userToken) {
     try {
+      const authenticatedUser = await authenticateUser(userToken);
+
+      if (authenticatedUser.role != "user") {
+        throw new serviceErrorHandler(
+          { message: "Not authorized" },
+          { code: 401 }
+        );
+      }
       const foundPost = (await PostController.getOneById(data)).data;
 
       if (!foundPost) {
-          throw new serviceErrorHandler(
-              { message: "Post not found", name: "usernotfound" },
-              {
+        throw new serviceErrorHandler(
+          { message: "Post not found" },
+          {
             code: 404,
             path: "_id",
-        }
+          }
         );
-    }
-    
-    return foundPost;
-} catch (error) {
-        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+      }
+
+      return foundPost;
+    } catch (error) {
       throw error;
     }
   }
 
-  async postUpdateOne(data) {
+  async postUpdateOne(data, userToken) {
     try {
-      const foundPost = (await PostController.updateOneByFilter(data)).data;
+      const authenticatedUser = await authenticateUser(userToken);
 
-      if (!foundPost) {
-          throw new serviceErrorHandler(
-              { message: "Post not found", name: "usernotfound" },
-              {
-            code: 404,
-            path: "_id",
-        }
+      if (authenticatedUser.role != "creator") {
+        throw new serviceErrorHandler(
+          { message: "Not authorized" },
+          { code: 401 }
         );
-    }
-    
-    return foundPost;
-} catch (error) {
-        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+      }
+      const preparedData = {
+        content: data.content,
+      };
+
+      await postValidator.create(preparedData);
+
+      const filter = {
+        user: authenticatedUser._id,
+        _id: data._id,
+      };
+
+
+
+      const response = await PostController.updateOneByFilter(
+        filter,
+        preparedData
+      );
+
+      return response;
+    } catch (error) {
       throw error;
     }
   }
 
-  async postDeleteOne(data) {
+  async postDeleteOne(data, userToken) {
     try {
-      const foundPost = (await PostController.deleteOneByFilter(data)).data;
+      const authenticatedUser = await authenticateUser(userToken);
 
-      if (!foundPost) {
-          throw new serviceErrorHandler(
-              { message: "Post not found", name: "usernotfound" },
-              {
-            code: 404,
-            path: "_id",
-        }
+      if (authenticatedUser.role != "admin") {
+        throw new serviceErrorHandler(
+          { message: "Not authorized" },
+          { code: 401 }
         );
-    }
-    
-    return foundPost;
-} catch (error) {
-        console.log("🚀 ~ file: user.service.js:48 ~ UserService ~ userGetOne ~ error:", error)
+      }
+      const foundPost = await PostController.deleteOneByFilter({ _id: data });
+
+      return foundPost;
+    } catch (error) {
       throw error;
     }
   }
-
-  
-
 }
 
 export default new PostService();

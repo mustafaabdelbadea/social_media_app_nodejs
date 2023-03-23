@@ -24,7 +24,7 @@ class Crud {
 
   async getById(model, _id, options) {
     try {
-      const doc = await model.findOne({_id: _id}).select(`-${options.populate}`);
+      const doc = await model.findOne({_id: _id}).select(`-${options?.populate}`);
       
       return doc;
     } catch (error) {
@@ -47,7 +47,6 @@ class Crud {
 
       return doc
     } catch (error) {
-      console.log("🚀 ~ file: crud.js:50 ~ Crud ~ findOneAndUpdate ~ error:", error)
       throw new Error("Something Went Wrong");
     }
   }

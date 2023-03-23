@@ -4,7 +4,7 @@ const router = Router();
 
 router.post("/",async (req, res) => {
   try {
-    const result = await postService.postCreate(req.body);
+    const result = await postService.postCreate(req.body,req.headers['authorization']);
 
     res.send(result);
   } catch (error) {
@@ -15,7 +15,7 @@ router.post("/",async (req, res) => {
 
 router.get('/:id',async(req,res) => {
   try {
-      const result = await postService.postGetOne(req.params.id);
+      const result = await postService.postGetOne(req.params.id,req.headers['authorization']);
   
       res.send(result);
     } catch (error) {
@@ -27,7 +27,11 @@ router.get('/:id',async(req,res) => {
 router.patch('/:id',async (req,res) => {
 
   try {
-      const result = await postService.postUpdateOne(req.params.id);
+    const data = {
+      _id: req.params.id,
+      content: req.body.content
+    }
+      const result = await postService.postUpdateOne(data,req.headers['authorization']);
   
       res.send(result);
     } catch (error) {

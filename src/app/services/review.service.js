@@ -2,7 +2,6 @@ import ReviewController  from "../controllers/user.controller.js";
 import { authenticateUser } from "./utils/authentication.js";
 import { serviceErrorHandler } from "./utils/error.js";
 import reviewValidator from "./utils/review-validator.js";
-import reviewValidator from "./utils/user-validator.js";
 
 
 class ReviewService {
