@@ -39,7 +39,7 @@ class PostService {
           { code: 401 }
         );
       }
-      const foundPost = (await PostController.getOneById(data)).data;
+      const foundPost = (await PostController.getOneById(data));
 
       if (!foundPost) {
         throw new serviceErrorHandler(

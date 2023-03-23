@@ -14,6 +14,16 @@ export class ReviewController {
       throw error;
     }
   }
+
+  async getReviews(filter) {
+    try {
+      const reviews = await await Crud.findAll(ReviewModel, filter);
+
+      return reviews
+    } catch (error) {
+      throw error;
+    }
+  }
   async getOneByfiler(filter) {
     try {
       const review = await Crud.findOneByFilter(ReviewModel, filter);

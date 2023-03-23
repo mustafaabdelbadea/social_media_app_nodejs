@@ -26,17 +26,16 @@ export class CommentController {
     }
   }
 
-//   async getOneByFilter(filter) {
-//     try {
-//       const user = await Crud.findOneByFilter(UserModel, filter);
 
-//       return {
-//         data: user,
-//       };
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+  async getComments(filter) {
+    try {
+      const comments = await await Crud.findAll(CommentModel, filter);
+
+      return comments
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async updateOneByFilter(filter, data) {
     try {

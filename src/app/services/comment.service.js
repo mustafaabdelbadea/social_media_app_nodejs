@@ -21,7 +21,7 @@ class CommentService {
 
       await commentValidator.create(contentObj);
 
-      const foundPost = (await PostController.getOneById(data.post)).data;
+      const foundPost = (await PostController.getPosts({_id: data.post}));
 
       if (!foundPost) {
         throw new serviceErrorHandler(
@@ -119,7 +119,6 @@ class CommentService {
 
       return foundComment;
     } catch (error) {
-      console.log("🚀 ~ file: comment.service.js:122 ~ CommentService ~ commentDeleteOne ~ error:", error)
       throw error;
     }
   }

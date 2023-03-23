@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import Crud from "./utils/crud.js";
 import { serviceErrorHandler } from "../services/utils/error.js";
 import UserModel from "../models/user.model.js";
+import  PostController  from "./post.controller.js";
 
 export class UsersController {
   async userRegister(data) {
@@ -38,8 +39,11 @@ export class UsersController {
           process.env.JWT_SECRET_KEY
         );
 
+        const posts = await PostController.getPosts({user: user._id})
+
         return {
           data: {
+            posts: posts,
             token: token,
             user: user,
           },
