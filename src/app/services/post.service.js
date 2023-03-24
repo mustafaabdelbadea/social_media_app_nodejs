@@ -7,7 +7,6 @@ class PostService {
   async postCreate(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
-
       if (authenticatedUser.role != "creator") {
         throw new serviceErrorHandler(
           { message: "Not authorized" },
@@ -15,20 +14,16 @@ class PostService {
         );
       }
       await postValidator.create(data);
-
       const preparedData = {
         content: data.content,
         user: authenticatedUser._id,
       };
-
       const postResponse = await PostController.addPost(preparedData);
-
       return postResponse;
     } catch (error) {
       throw error;
     }
   }
-
   async postGetOne(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);

@@ -7,15 +7,15 @@ import path from "path";
 import { authenticateUser } from "./utils/authentication.js";
 import userController from "../controllers/user.controller.js";
 class UserService {
+
   async userSignUp(data) {
+
     try {
       const prepareData = {
         ...data.body,
         photos: [data?.file?.filename],
       };
-
       await usersValidator.create(prepareData);
-
       const foundUser = (
         await UsersController.getOneByFilter({ email: data.body.email })
       ).data;
@@ -29,7 +29,6 @@ class UserService {
           }
         );
       }
-
       const photo = await this.UploadPhoto(data?.file?.filename);
 
       prepareData.photos[0] = photo;
@@ -45,6 +44,7 @@ class UserService {
   }
 
   async userSignIn(data) {
+
     try {
       await usersValidator.signin(data);
 
@@ -55,11 +55,9 @@ class UserService {
       throw error;
     }
   }
-
   async userGetOne(data) {
     try {
       const foundUser = (await UsersController.getOneById(data)).data;
-
       if (!foundUser) {
         throw new serviceErrorHandler(
           { message: "User not found", name: "usernotfound" },
@@ -69,13 +67,11 @@ class UserService {
           }
         );
       }
-
       return foundUser;
     } catch (error) {
       throw error;
     }
   }
-
   async deleteOne(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
@@ -85,7 +81,6 @@ class UserService {
           { code: 401 }
         );
       }
-
       const foundUser = (await UsersController.getOneById(data)).data;
 
       if (foundUser.role == "admin") {
@@ -101,14 +96,12 @@ class UserService {
       throw error;
     }
   }
-
   async UploadPhoto(photo) {
     cloudinary.config({
       cloud_name: process.env.CLOUD_NAME,
       api_key: process.env.API_KEY,
       api_secret: process.env.API_SECRET,
     });
-
     try {
       const response = await cloudinary.uploader.upload("./uploads/" + photo, {
         public_id: "olympic_flag",
@@ -136,6 +129,34 @@ class UserService {
       throw error;
     }
   }
-}
+
+  async userUpdateOne(data, userToken)
+  {
+ 
+   try {
+     const authenticatedUser = await authenticateUser(userToken);
+ 
+     if (authenticatedUser.role != "user") 
+     {
+ 
+       throw new serviceErrorHandler(
+ 
+         { message: "Not authorized" },
+         { code: 401 }
+       );
+     }
+     
+     const foundUser = await UsersController.updateOneByFilter(filter, data);
+ 
+     return foundUser;
+ 
+   } catch (error) {
+     throw error;
+   }
+ }
+};
+
+ 
+
 
 export default new UserService();

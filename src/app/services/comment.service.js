@@ -14,30 +14,23 @@ class CommentService {
           { code: 401 }
         );
       }
-
       const contentObj = {
         content: data.content,
       };
-
       await commentValidator.create(contentObj);
-
       const foundPost = (await PostController.getPosts({_id: data.post}));
-
       if (!foundPost) {
         throw new serviceErrorHandler(
           { message: "Post not found" },
           { code: 404 }
         );
       }
-
       const preparedData = {
         content: data.content,
         user: authenticatedUser._id,
         post: data.post,
       };
-
       const commentResponse = await CommentController.addComment(preparedData);
-
       return commentResponse;
     } catch (error) {
       throw error;

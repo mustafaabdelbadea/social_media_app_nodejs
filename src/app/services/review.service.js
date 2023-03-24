@@ -8,28 +8,23 @@ class ReviewService {
   async reviewCreate(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
-
       if (authenticatedUser.role != "user") {
         throw new serviceErrorHandler(
           { message: "Not authorized" },
           { code: 401 }
         );
       }
-
       const filter = {
         user: authenticatedUser._id,
         post: data.post
       }
-
       const foundReview = (await ReviewController.getOneByfiler(filter)).data
-
       if(foundReview) {
         throw new serviceErrorHandler(
           { message: "Already exits" },
           { code: 400 }
         );
       }
-
       const rateObj = {
         rate: data.rate,
       };
@@ -44,21 +39,17 @@ class ReviewService {
           { code: 404 }
         );
       }
-
       const preparedData = {
         rate: data.rate,
         user: authenticatedUser._id,
         post: data.post,
       };
-
       const reviewResponse = await ReviewController.addReview(preparedData);
-
       return reviewResponse;
     } catch (error) {
       throw error;
     }
   }
-
   async reviewGetOne(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
@@ -69,11 +60,12 @@ class ReviewService {
           { code: 401 }
         );
       }
-
       const foundReview = (await ReviewController.getOneById(data)).data;
+      if (!foundReview) 
+      {
 
-      if (!foundReview) {
         throw new serviceErrorHandler(
+          
           { message: "Review not found", name: "usernotfound" },
           {
             code: 404,
@@ -81,43 +73,44 @@ class ReviewService {
           }
         );
       }
-
       return foundReview;
     } catch (error) {
       throw error;
     }
   }
-
   async reviewUpdateOne(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
-      if (authenticatedUser.role != "user") {
+
+      if (authenticatedUser.role != "user") 
+      {
+
         throw new serviceErrorHandler(
+
           { message: "Not authorized" },
           { code: 401 }
         );
       }
-
       const rateObj = {
+
         rate: data.rate
       }
-
       await reviewValidator.create(rateObj);
 
       const filter = {
+
         user: authenticatedUser._id,
         _id: data._id
+
       }
-
-
       const foundReview = await ReviewController.updateOneByFilter(filter, rateObj);
 
       return foundReview;
+
     } catch (error) {
       throw error;
     }
   }
-
   async reviewDeleteOne(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
@@ -127,7 +120,6 @@ class ReviewService {
           { code: 401 }
         );
       }
-
       const foundReview = await ReviewController.deleteOneByFilter({ _id: data });
       return foundReview;
     } catch (error) {

@@ -45,4 +45,21 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.patch("/:id", async (req, res) => {
+  try {
+    const data = {
+      _id: req.params.id,
+      rate: req.body.rate,
+    };
+    const result = await reviewService.reviewUpdateOne(
+      data,
+      req.headers["authorization"]
+    );
+
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 export const userRouter = router;
