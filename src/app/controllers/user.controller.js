@@ -86,10 +86,10 @@ export class UsersController {
     try {
       const user = await Crud.findOneAndUpdate(UserModel, filter, data);
 
-      return {
-        data: user,
-      };
+      return user;
+     
     } catch (error) {
+      
       throw error;
     }
   }

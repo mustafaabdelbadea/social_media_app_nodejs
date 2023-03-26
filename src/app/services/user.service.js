@@ -75,6 +75,7 @@ class UserService {
   async deleteOne(data, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
+
       if (authenticatedUser.role != "admin") {
         throw new serviceErrorHandler(
           { message: "Not authorized" },
@@ -96,22 +97,33 @@ class UserService {
       throw error;
     }
   }
+
   async UploadPhoto(photo) {
+
     cloudinary.config({
+
       cloud_name: process.env.CLOUD_NAME,
       api_key: process.env.API_KEY,
       api_secret: process.env.API_SECRET,
+
     });
     try {
-      const response = await cloudinary.uploader.upload("./uploads/" + photo, {
+
+        const response = await cloudinary.uploader.upload("./uploads/" + photo, {
         public_id: "olympic_flag",
+
       });
+
       this.clearUploads(photo);
       return response.secure_url;
+
     } catch (error) {
+
       await this.clearUploads(photo);
       throw new serviceErrorHandler(
+
         { message: "Error while uploading photo" },
+
         {
           code: 400,
           path: "photo",
@@ -121,40 +133,39 @@ class UserService {
   }
 
   clearUploads(file) {
+
     try {
+
       fs.unlink(path.join("./uploads/", file), (err) => {
+
         if (err) throw err;
       });
+
+    } catch (error) {
+
+      throw error;
+    }
+  }
+
+  async updateOne(data, newUpdates, userToken) {
+    try {
+      const authenticatedUser = await authenticateUser(userToken);
+
+      if (authenticatedUser.role != "admin") {
+        throw new serviceErrorHandler(
+          { message: "Not authorized" },
+          { code: 401 }
+        );
+      }
+      const foundUser = (await UsersController.updateOneByFilter(data, newUpdates));
+
+      return foundUser;
     } catch (error) {
       throw error;
     }
   }
 
-  async userUpdateOne(data, userToken)
-  {
- 
-   try {
-     const authenticatedUser = await authenticateUser(userToken);
- 
-     if (authenticatedUser.role != "user") 
-     {
- 
-       throw new serviceErrorHandler(
- 
-         { message: "Not authorized" },
-         { code: 401 }
-       );
-     }
-     
-     const foundUser = await UsersController.updateOneByFilter(filter, data);
- 
-     return foundUser;
- 
-   } catch (error) {
-     throw error;
-   }
- }
-};
+}
 
  
 
