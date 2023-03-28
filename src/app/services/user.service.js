@@ -7,13 +7,11 @@ import path from "path";
 import { authenticateUser } from "./utils/authentication.js";
 import userController from "../controllers/user.controller.js";
 class UserService {
-
   async userSignUp(data) {
-
     try {
       const prepareData = {
         ...data.body,
-        photos: [data?.file?.filename],
+        photos: [data?.file?.filename]
       };
       await usersValidator.create(prepareData);
       const foundUser = (
@@ -25,7 +23,7 @@ class UserService {
           { message: "Email already exists", name: "userFound" },
           {
             code: 409,
-            path: "email",
+            path: "email"
           }
         );
       }
@@ -44,7 +42,6 @@ class UserService {
   }
 
   async userSignIn(data) {
-
     try {
       await usersValidator.signin(data);
 
@@ -63,7 +60,7 @@ class UserService {
           { message: "User not found", name: "usernotfound" },
           {
             code: 404,
-            path: "_id",
+            path: "_id"
           }
         );
       }
@@ -99,75 +96,68 @@ class UserService {
   }
 
   async UploadPhoto(photo) {
-
     cloudinary.config({
-
       cloud_name: process.env.CLOUD_NAME,
       api_key: process.env.API_KEY,
-      api_secret: process.env.API_SECRET,
-
+      api_secret: process.env.API_SECRET
     });
     try {
-
-        const response = await cloudinary.uploader.upload("./uploads/" + photo, {
-        public_id: "olympic_flag",
-
+      const response = await cloudinary.uploader.upload("./uploads/" + photo, {
+        public_id: "olympic_flag"
       });
 
       this.clearUploads(photo);
       return response.secure_url;
-
     } catch (error) {
-
       await this.clearUploads(photo);
       throw new serviceErrorHandler(
-
         { message: "Error while uploading photo" },
 
         {
           code: 400,
-          path: "photo",
+          path: "photo"
         }
       );
     }
   }
 
   clearUploads(file) {
-
     try {
-
       fs.unlink(path.join("./uploads/", file), (err) => {
-
         if (err) throw err;
       });
-
     } catch (error) {
-
       throw error;
     }
   }
 
-  async updateOne(data, newUpdates, userToken) {
+  async updateOne(newUpdates, userToken) {
     try {
       const authenticatedUser = await authenticateUser(userToken);
 
-      if (authenticatedUser.role != "admin") {
+      if (newUpdates?.email || newUpdates?.password || newUpdates?.role) {
         throw new serviceErrorHandler(
-          { message: "Not authorized" },
-          { code: 401 }
+          { message: "Cannot update" },
+          { code: 400 }
         );
       }
-      const foundUser = (await UsersController.updateOneByFilter(data, newUpdates));
+
+      const newData = {
+        "name.firstName": newUpdates?.name?.firstName || authenticatedUser.name.firstName,
+        "name.lastName": newUpdates?.name?.lastName || authenticatedUser.name.lastName,
+        photos: newUpdates?.name?.photos || authenticatedUser.photos,
+      };
+
+      const foundUser = await UsersController.updateOneByFilter(
+        { _id: authenticatedUser._id },
+        newData
+      );
 
       return foundUser;
     } catch (error) {
       throw error;
     }
   }
-
 }
-
- 
-
 
 export default new UserService();

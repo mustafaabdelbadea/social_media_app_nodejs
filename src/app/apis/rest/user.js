@@ -45,20 +45,17 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/", async (req, res) => {
   try {
-    const data = {
-         _id: req.params.id
-    };
+    
 
     const newUpdates = req.body;
 
-    const result = await userService.updateOne(data,newUpdates,req.headers["authorization"])
+    const result = await userService.updateOne(newUpdates,req.headers["authorization"])
      
     res.send(result);
 
-  } catch (error) {
-
+} catch (error) {
     res.send(error);
   }
 });
