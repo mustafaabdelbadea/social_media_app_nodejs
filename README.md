@@ -1,1 +1,1 @@
-# social_media_app_nodejs
+# Social Media Nodejs Application
